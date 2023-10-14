@@ -5,10 +5,11 @@ import { cartsModel } from '../models/carts.model.js';
 
 const allProducts = new ProductManager;
 
-class CartManager {
+class CartManager extends cartsModel {
     constructor() {
+        super();
         //this.path = "./src/models/carts.json";
-        
+
     }
 
     readCarts = async () => {

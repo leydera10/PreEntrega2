@@ -46,7 +46,7 @@ app.use("/", express.static(__dirname + "/public"));
 
 app.get("/products", async (req, res) => {
     let allProducts = await product.getProducts()
-    allProducts  = allProducts.map(product => product.toJSON())
+    allProducts  = allProducts.map(product => product.toJSON());
     res.render("viewProducts", {
         title: "vista productos",
         carts : allProducts
