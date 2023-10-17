@@ -11,18 +11,23 @@ ProductRouter.put("/:id", async (req, res) => {
     res.send(await product.updateProducts(id, updateProducts))
 })
 
- ProductRouter.get("/:id", async (req, res) => {
-    try{
+ProductRouter.get("/:id", async (req, res) => {
+    try {
         const prodId = req.params.id;
 
-        const productDetails = await product.getProductsById(prodId)
-        res.render("viewDetails",{ product: productDetails})
+        const productDetails = await product.getProductsById(prodId);
+
+        if (productDetails) {
+            res.render("viewDetails", { product: productDetails });
+        } else {
+            res.status(404).json({ error: 'Producto no encontrado' });
+        }
     } catch (error) {
         console.error('Error al obtener producto', error);
-        res.status(500).json({error: 'Error al obtener producto'});
+        res.status(500).json({ error: 'Error al obtener producto' });
     }
-   
 });
+
 
 // get opcionales //
 
@@ -35,10 +40,12 @@ ProductRouter.get("/limit/:limit", async (req, res)=> {
 })
 
 ProductRouter.get("/page/:page", async (req, res)=> {
-    let page = parseInt(req.params.limit)
-    if (isNaN(limit)|| page <= 0 ){
-        limit = 1;
+    let page = parseInt(req.params.page);
+    if (isNaN(page) || page <= 0) {
+        page = 1;
     }
+    
+    
     const productsPerPage = 1;
     res.send(await product.getProductsByPage(page, productsPerPage))
 })
@@ -78,25 +85,23 @@ ProductRouter.get("/", async (req, res)=> {
 })
 
 
- ProductRouter.get("/:id", async (req, res) => {
-    let id = req.params.id
-    res.send(await product.getProductsById(id))
-})
+ProductRouter.post("/", async (req, res) => {
+    let newProduct = req.body;
 
- ProductRouter.post("/", async (req, res) => {
-    let newProduct = req.body
-      if (
-        !newProduct.name ||
+    if (
         !newProduct.description ||
-        !newProduct.code ||
-        !newProduct.price ||
-        !newProduct.stock ||
-        !newProduct.category) {
-        return res.status(400).json({ error: 'Debe proporcionar todos los campos: name, description, code, price, stock, category, thumbnail (opcional).' });
+        !newProduct.img ||
+        !newProduct.Price ||
+        !newProduct.Stock ||
+        !newProduct.category ||
+        !newProduct.avalability
+    ) {
+        return res.status(400).json({ error: 'Debe proporcionar todos los campos: description, img, Price, Stock, category, avalability.' });
     }
 
-    res.send(await product.addProducts(newProduct))
-})
+    res.send(await product.addProducts(newProduct));
+});
+
 
 
 

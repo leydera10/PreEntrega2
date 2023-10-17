@@ -8,6 +8,8 @@ import {engine} from "express-handlebars"
 import * as path from "path"
 import __dirname from "./utils.js"
 
+const product = new ProductManager();
+const cart = new CartManager();
 
 
 const app = express()
@@ -38,22 +40,27 @@ mongoose.connect("mongodb+srv://leiderasis30:M2UCwmWsQlIGwGKC@cluster0.f7btw4v.m
 
 //Handlebars//
 
+// Configurar Handlebars con la opción para desactivar la comprobación de acceso al prototipo
+app.engine('hbs', engine({ allowProtoPropertiesByDefault: true }));
+
+
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", path.resolve(__dirname + "/views"))
-
 app.use("/", express.static(__dirname + "/public"));
 
+
+
 app.get("/products", async (req, res) => {
-    let allProducts = await product.getProducts()
-    allProducts  = allProducts.map(product => product.toJSON());
+    let allProducts = await product.getProducts();
+    const products = allProducts.map(product => product.toJSON());
     res.render("viewProducts", {
         title: "vista productos",
-        carts : allProducts
+        products: products
     });
-
-
 });
+
+//renderizado de productos en carrito
 
 app.get("/carts/:cid", async (req, res) => {
     let id = req.params.cid
